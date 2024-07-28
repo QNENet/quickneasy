@@ -23,7 +23,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class QuickNEasyApp implements AppShellConfigurator {
 
     public static void main(String[] args) {
-        SpringApplication.run(QuickNEasyApp.class, args);
+       SpringApplication.run(QuickNEasyApp.class, args);
     }
 
 }
