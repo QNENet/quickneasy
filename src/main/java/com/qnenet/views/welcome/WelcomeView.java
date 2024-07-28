@@ -1,16 +1,17 @@
 package com.qnenet.views.welcome;
 
+import com.qnenet.constants.QRoute;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 
+@AnonymousAllowed
 @PageTitle("Welcome")
-@Route(value = "")
-@RouteAlias(value = "")
+@Route(value = QRoute.WELCOME)
 public class WelcomeView extends VerticalLayout {
 
     public WelcomeView() {
