@@ -60,12 +60,15 @@ public class QSystem {
 
         running.set(true);
         watchThread = Thread.ofVirtual().start(this::watchDirectory);
-
-        if (isNew) {
-            isNew = false;
-        } else {
-
+        // Load existing addons
+        File[] addonFiles = addonsPath.toFile().listFiles((dir, name) -> name.endsWith(".jar"));
+        if (addonFiles != null) {
+            for (File addonFile : addonFiles) {
+                log.info("Loading existing addon: {}", addonFile.getName());
+                loadJar(addonFile);
+            }
         }
+
     }
 
     @PreDestroy
@@ -174,7 +177,7 @@ public class QSystem {
                                 QAddon addon = (QAddon) clazz.getDeclaredConstructor().newInstance();
                                 plugins.put(addon.getName(), addon);
                                 pluginClassLoaders.put(addon.getName(), loader);
-                                addon.execute();
+                                addon.startup();
                                 log.info("Loaded Addon: {}", addon.getName());
                             }
                         } catch (Exception e) {
@@ -186,10 +189,10 @@ public class QSystem {
         }
     }
 
-    private void reloadJar(File jarFile) {
-        removeJar(jarFile);
-        loadJar(jarFile);
-    }
+    // private void reloadJar(File jarFile) {
+    //     removeJar(jarFile);
+    //     loadJar(jarFile);
+    // }
 
     private void removeJar(File jarFile) {
         log.info("Removing JAR file: {}", jarFile.getName());
@@ -230,6 +233,14 @@ public class QSystem {
         try (InputStream in = url.openStream()) {
             Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
         }
+    }
+
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean b) {
+        isNew = b;
     }
 
 }
