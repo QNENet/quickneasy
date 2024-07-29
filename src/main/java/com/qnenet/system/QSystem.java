@@ -37,11 +37,11 @@ public class QSystem {
     private final Map<String, Object> plugins = new HashMap<>();
     private final Map<String, URLClassLoader> pluginClassLoaders = new HashMap<>();
     private final Map<String, QAddon> addonInstances = new HashMap<>();
+    private final Map<String, QVaadinAddonInfo> vaadinAddons = new HashMap<>();
 
     private final AtomicBoolean running = new AtomicBoolean(false);
     private Thread watchThread;
     // private RouteConfiguration routeConfig;
-    private Map<String, QVaadinAddonInfo> vaadinAddons;
     private boolean isNew = false;
 
     @PostConstruct
@@ -161,13 +161,13 @@ public class QSystem {
                             Class<?> clazz = loader.loadClass(className);
 
                             if (Component.class.isAssignableFrom(clazz)) {
-                                QVaadinAddonInfo vaadinAddonInfo = new QVaadinAddonInfo();
-                                vaadinAddonInfo.className = className;
-                                vaadinAddonInfo.classLoader = loader;
-
+ 
                                 if (clazz.isAnnotationPresent(Route.class)) {
                                     Route routeAnnotation = clazz.getAnnotation(Route.class);
                                     String routeValue = routeAnnotation.value();
+                                    QVaadinAddonInfo vaadinAddonInfo = new QVaadinAddonInfo();
+                                    vaadinAddonInfo.clazz = clazz;
+                                    vaadinAddonInfo.classLoader = loader;
                                     vaadinAddonInfo.route = routeValue;
                                     vaadinAddons.put(routeValue, vaadinAddonInfo);
 

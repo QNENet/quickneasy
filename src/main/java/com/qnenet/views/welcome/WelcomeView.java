@@ -19,17 +19,19 @@ public class WelcomeView extends VerticalLayout {
     private QSystem system;
 
     public WelcomeView(QSystem system) {
+
+        setSizeFull();
+        setSpacing(false);
+        setJustifyContentMode(JustifyContentMode.CENTER);
+        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+        getStyle().set("text-align", "center");
+
         this.system = system;
         if (system.isNew()) {
             setupNewSystem();
         } else {
             setupExistingSystem();
         }
-        setSizeFull();
-        setSpacing(false);
-        setJustifyContentMode(JustifyContentMode.CENTER);
-        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        getStyle().set("text-align", "center");
 
 
     }
