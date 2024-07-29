@@ -36,6 +36,8 @@ public class QSystem {
     // Rest of the code...
     private final Map<String, Object> plugins = new HashMap<>();
     private final Map<String, URLClassLoader> pluginClassLoaders = new HashMap<>();
+    private final Map<String, QAddon> addonInstances = new HashMap<>();
+
     private final AtomicBoolean running = new AtomicBoolean(false);
     private Thread watchThread;
     // private RouteConfiguration routeConfig;
@@ -174,11 +176,12 @@ public class QSystem {
                                 }
 
                             } else if (QAddon.class.isAssignableFrom(clazz)) {
-                                QAddon addon = (QAddon) clazz.getDeclaredConstructor().newInstance();
-                                plugins.put(addon.getName(), addon);
-                                pluginClassLoaders.put(addon.getName(), loader);
-                                addon.startup();
-                                log.info("Loaded Addon: {}", addon.getName());
+                                QAddon addonInstance = (QAddon) clazz.getDeclaredConstructor().newInstance();
+                                plugins.put(addonInstance.getName(), addonInstance);
+                                pluginClassLoaders.put(addonInstance.getName(), loader);
+                                addonInstances.put(addonInstance.getName(), addonInstance);
+                                addonInstance.startup();
+                                log.info("Loaded Addon: {}", addonInstance.getName());
                             }
                         } catch (Exception e) {
                             log.error("Error loading class from JAR file", e);
@@ -208,7 +211,10 @@ public class QSystem {
         }
 
         if (pluginKey != null) {
+
             plugins.remove(pluginKey);
+            QAddon addonInstance = addonInstances.get(pluginKey);
+            addonInstance.shutdown();
             URLClassLoader loader = pluginClassLoaders.remove(pluginKey);
             try {
                 if (loader != null) {
