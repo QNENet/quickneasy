@@ -146,7 +146,8 @@ public class QSystem {
     }
 
     private void loadJar(File jarFile) {
-        log.info("Loading JAR file: {}", jarFile.getName());
+        String jarFileName = jarFile.getName();
+        log.info("Loading JAR file: {}", jarFileName);
 
         try (JarFile jar = new JarFile(jarFile)) {
             URL[] urls = { jarFile.toURI().toURL() };
@@ -177,9 +178,9 @@ public class QSystem {
 
                             } else if (QAddon.class.isAssignableFrom(clazz)) {
                                 QAddon addonInstance = (QAddon) clazz.getDeclaredConstructor().newInstance();
-                                plugins.put(addonInstance.getName(), addonInstance);
-                                pluginClassLoaders.put(addonInstance.getName(), loader);
-                                addonInstances.put(addonInstance.getName(), addonInstance);
+                                plugins.put(jarFileName, addonInstance);
+                                pluginClassLoaders.put(jarFileName, loader);
+                                addonInstances.put(jarFileName, addonInstance);
                                 addonInstance.startup();
                                 log.info("Loaded Addon: {}", addonInstance.getName());
                             }
@@ -204,7 +205,7 @@ public class QSystem {
         String pluginKey = null;
 
         for (Map.Entry<String, Object> entry : plugins.entrySet()) {
-            if (jarFileName.contains(entry.getKey())) {
+            if (jarFileName.equals(entry.getKey())) {
                 pluginKey = entry.getKey();
                 break;
             }
